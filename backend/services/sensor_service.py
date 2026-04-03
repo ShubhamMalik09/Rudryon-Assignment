@@ -27,16 +27,4 @@ class SensorService:
             .all()
         )
 
-        alerts = []
-        for reading, sensor_name in results:
-            alerts.append({
-                "id": reading.id,
-                "sensor_id": reading.sensor_id,
-                "sensor_name": sensor_name,
-                "temperature": reading.temperature,
-                "timestamp": reading.timestamp,
-                "is_anomaly": reading.is_anomaly,
-                "rolling_avg": reading.rolling_avg
-            })
-
-        return alerts
+        return results
