@@ -15,6 +15,9 @@ class Base(DeclarativeBase):
     pass
 
 
-async def get_db():
-    async with SessionLocal() as session:
-        yield session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
