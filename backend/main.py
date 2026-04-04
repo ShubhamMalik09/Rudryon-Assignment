@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from db.connection import engine
 from models.sensor import Base
-from routers import sensors
+from routers import sensors, websocket
 
 
 app = FastAPI(title="Sensor Monitoring API", version="1.0.0")
@@ -19,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(sensors.router)
+app.include_router(websocket.router)
 
 
 @app.get("/")
