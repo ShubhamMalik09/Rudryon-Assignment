@@ -48,10 +48,10 @@ async def ws_readings(websocket: WebSocket, sensor_id: int):
         while True:
             db = SessionLocal()
             try:
-                readings = service.get_readings(db, sensor_id)
+                readings = service.get_readings(db, sensor_id, limit=10, order="desc")
 
                 data = [
-                    ReadingOut.model_validate(r).model_dump()
+                    ReadingOut.model_validate(r).model_dump(mode = "json")
                     for r in readings
                 ]
 
@@ -85,7 +85,7 @@ async def ws_alerts(websocket: WebSocket):
                         timestamp = reading.timestamp,
                         is_anomaly = reading.is_anomaly,
                         rolling_avg = reading.rolling_avg
-                    )
+                    ).model_dump(mode = 'json')
                     for reading, sensor_name in alerts
                 ]
 
