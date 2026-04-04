@@ -3,6 +3,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from db.connection import SessionLocal
 from services.sensor_service import SensorService
+from schemas.sensor_schema import ReadingOut, AlertOut
 
 router = APIRouter()
 service = SensorService()
@@ -50,14 +51,7 @@ async def ws_readings(websocket: WebSocket, sensor_id: int):
                 readings = service.get_readings(db, sensor_id)
 
                 data = [
-                    {
-                        "id": r.id,
-                        "sensor_id": r.sensor_id,
-                        "temperature": r.temperature,
-                        "timestamp": str(r.timestamp),
-                        "is_anomaly": r.is_anomaly,
-                        "rolling_avg": r.rolling_avg
-                    }
+                    ReadingOut.model_validate(r).model_dump()
                     for r in readings
                 ]
 
@@ -83,15 +77,15 @@ async def ws_alerts(websocket: WebSocket):
                 alerts = service.get_alerts(db)
 
                 data = [
-                    {
-                        "id": reading.id,
-                        "sensor_id": reading.sensor_id,
-                        "sensor_name": sensor_name,
-                        "temperature": reading.temperature,
-                        "timestamp": str(reading.timestamp),
-                        "is_anomaly": reading.is_anomaly,
-                        "rolling_avg": reading.rolling_avg
-                    }
+                    AlertOut(
+                        id = reading.id,
+                        sensor_id =  reading.sensor_id,
+                        sensor_name = sensor_name,
+                        temperature = reading.temperature,
+                        timestamp = reading.timestamp,
+                        is_anomaly = reading.is_anomaly,
+                        rolling_avg = reading.rolling_avg
+                    )
                     for reading, sensor_name in alerts
                 ]
 
