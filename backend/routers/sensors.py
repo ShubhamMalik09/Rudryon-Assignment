@@ -16,7 +16,7 @@ def get_sensors(db: Session = Depends(get_db)):
 
 @router.get("/{sensor_id}/readings", response_model=List[ReadingOut])
 def get_readings(sensor_id: int, db: Session = Depends(get_db)):
-    return service.get_readings(db, sensor_id)
+    return service.get_readings(db, sensor_id, limit = 10, order = "desc")
 
 
 @router.get("/alerts", response_model=List[AlertOut])

@@ -7,14 +7,22 @@ class SensorService:
         return db.query(Sensor).all()
 
 
-    def get_readings(self, db: Session, sensor_id: int):
-        readings = (
-            db.query(SensorReading)
-            .filter(SensorReading.sensor_id == sensor_id)
-            .order_by(SensorReading.timestamp.desc())
-            .all()
-        )
-
+    def get_readings(self, db: Session, sensor_id: int, limit : int = None, order: str = "desc"):
+        order = order.lower()
+        if order not in ["desc", "asc"]:
+            order = "desc"
+        
+        query = db.query(SensorReading).filter(SensorReading.sensor_id == sensor_id)
+        
+        if order == "asc":
+            query = query.order_by(SensorReading.timestamp.asc())
+        else:
+            query = query.order_by(SensorReading.timestamp.desc())
+        
+        if limit:
+            query = query.limit(limit)
+        
+        readings = query.all()
         return readings
 
 
